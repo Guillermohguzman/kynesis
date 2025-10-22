@@ -1,0 +1,405 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedimiento de Instalación - Sistema KYNESIS 45 kW</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #2D3748;
+        }
+        @import url('https://rsms.me/inter/inter.css');
+        .nav-item.active {
+            background-color: #2C5F2D;
+            color: white;
+            font-weight: 600;
+        }
+        .nav-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-item:hover {
+            background-color: #4CAF50;
+        }
+        .task-checkbox:checked + label .checkbox-icon {
+            background-color: #2C5F2D;
+            border-color: #2C5F2D;
+        }
+        .task-checkbox:checked + label .checkbox-icon svg {
+            display: block;
+        }
+        .modal {
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+        .modal.flex {
+            opacity: 1;
+        }
+        .modal.flex .modal-content {
+            transform: translateY(0);
+        }
+        .critical-step {
+            border-left: 4px solid #E53E3E;
+            background-color: #FEF2F2;
+        }
+        .important-step {
+            border-left: 4px solid #D69E2E;
+            background-color: #FFFBEB;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="flex flex-col min-h-screen">
+        <header class="bg-white shadow-lg p-6">
+            <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <h1 class="text-3xl font-bold text-gray-800">Sistema de Dispersión de Polvos KYNESIS 45 kW</h1>
+                    <p class="text-gray-600 mt-2">Procedimiento Integral de Instalación y Puesta en Marcha</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-sm font-medium text-gray-700 mb-2">Progreso General del Proyecto</span>
+                    <div class="w-28 h-28 relative">
+                        <canvas id="progressChart"></canvas>
+                        <div id="progressText" class="absolute inset-0 flex items-center justify-center text-xl font-bold text-gray-800">0%</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-grow container mx-auto p-4 md:p-8">
+            <div class="flex flex-col md:flex-row gap-8">
+                <aside class="w-full md:w-1/4">
+                    <nav id="main-nav" class="bg-white rounded-xl shadow-lg p-6 space-y-3">
+                        <h3 class="font-bold text-lg text-gray-800 mb-4 border-b pb-2">Fases del Proyecto</h3>
+                    </nav>
+                </aside>
+
+                <main id="main-content" class="w-full md:w-3/4">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <div class="text-center py-12">
+                            <h2 class="text-2xl font-semibold text-gray-600">Seleccione una fase del proyecto para comenzar</h2>
+                            <p class="text-gray-500 mt-2">Utilice el menú de navegación lateral para acceder a las diferentes etapas del procedimiento</p>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <footer class="bg-gray-800 text-white py-6 mt-12">
+            <div class="container mx-auto text-center">
+                <p class="text-sm">Sistema de Dispersión de Polvos KYNESIS - Documentación Técnica Especializada</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="diagram-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+        <div class="modal-content bg-white rounded-xl shadow-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center border-b pb-4 mb-6">
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-800"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-red-500 text-3xl transition-colors">&times;</button>
+            </div>
+            <div id="modal-body" class="prose max-w-none">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const content = {
+            fase1: {
+                title: "Fase 1: Planificación y Preparación del Sitio",
+                description: "Esta fase inicial establece los fundamentos para una instalación exitosa. Incluye la revisión documental, preparación del área de trabajo y verificación de todos los requisitos previos necesarios para la instalación física del equipo.",
+                tasks: [
+                    { id: 't1_1', text: "Revisar documentación técnica completa: manual de operación y diagramas eléctricos." },
+                    { id: 't1_2', text: "Verificar dimensiones del área y espacios libres requeridos (mínimo 100 cm perimetrales)." },
+                    { id: 't1_3', text: "Confirmar capacidad estructural del suelo (capacidad de carga ≥ 2 ton/m²)." },
+                    { id: 't1_4', text: "Asegurar condiciones ambientales adecuadas: temperatura +5°C a +45°C, humedad < 90%.", class: "important-step" },
+                    { id: 't1_5', text: "Preparar punto de conexión de energía principal: 460V AC, 60Hz, trifásico + tierra." },
+                    { id: 't1_6', text: "Disponer de sistema de aire comprimido a 6 bar con válvula de cierre y depósito." },
+                    { id: 't1_7', text: "Verificar especificaciones de tuberías: Entrada 2\", Salida 3\" con conexiones adecuadas." },
+                    { id: 't1_8', text: "Inspeccionar integridad del embalaje y equipo recibido, comparar con lista de empaque." }
+                ]
+            },
+            fase2: {
+                title: "Fase 2: Instalación Mecánica y Eléctrica",
+                description: "Fase de montaje físico e interconexión de sistemas. Incluye posicionamiento, nivelación, conexiones eléctricas principales e integración de tuberías y ductos.",
+                tasks: [
+                    { id: 't2_1', text: "Realizar descarga y posicionamiento utilizando puntos de elevación designados.", class: "important-step" },
+                    { id: 't2_2', text: "Ejecutar nivelación precisa en dos planos ortogonales utilizando nivel de precisión.", class: "critical-step", button: { text: "Ver Especificaciones", content: "<h3>Procedimiento de Nivelación Crítica</h3><p>La nivelación incorrecta constituye uno de los principales factores de falla operativa. Siga este procedimiento meticulosamente:</p><ul><li>Utilice nivel de burbuja de precisión o nivel láser</li><li>Verifique horizontalidad en dirección longitudinal y transversal</li><li>Ajuste mediante calzas metálicas hasta obtener nivelación perfecta</li><li>Verifique que no existan puntos de apoyo suspendidos</li><li><strong>ADVERTENCIA:</strong> Operar el equipo sin nivelación adecuada anula la garantía y puede causar daños irreparables</li></ul>" } },
+                    { id: 't2_3', text: "Conectar cableado interno al cuadro de control principal QE1 según diagrama." },
+                    { id: 't2_4', text: "Realizar conexión de alimentación principal al interruptor 100QG01." },
+                    { id: 't2_5', text: "Verificar secuencia de fases y sentido de giro del motor principal M01K01." },
+                    { id: 't2_6', text: "Instalar tuberías de entrada (2\") y salida (3\") con soportes adecuados." },
+                    { id: 't2_7', text: "Conectar circuito de refrigeración con glicol para sello mecánico." },
+                    { id: 't2_8', text: "Integrar sistema de comunicaciones PROFINET según esquema de red." }
+                ]
+            },
+            fase3: {
+                title: "Fase 3: Instalación de Instrumentación de Campo",
+                description: "Instalación y configuración de instrumentos de medición críticos para el monitoreo y control del proceso. Esta fase requiere precisión y atención a los detalles técnicos.",
+                tasks: [
+                    { id: 't3_1', text: "Instalar transmisor de presión Cerabar PMP23.", button: { text: "Especificaciones Técnicas", content: `
+                        <h3>Transmisor de Presión Cerabar PMP23</h3>
+                        <p><strong>Documentación de Referencia:</strong> Manual BA01271P</p>
+                        <div class="bg-gray-50 p-4 rounded-lg my-4">
+                            <h4 class="font-bold mb-2">Procedimiento de Instalación</h4>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li><strong>Orientación:</strong> Montaje vertical o con inclinación máxima de 45°</li>
+                                <li><strong>Conexión de Proceso:</strong> Utilizar conexión roscada G1/2" con junta de estanqueidad</li>
+                                <li><strong>Par de Apriete:</strong> 25-30 Nm para conexión al proceso</li>
+                                <li><strong>Conexión Eléctrica:</strong> Conector M12 de 4 polos con apantallamiento</li>
+                            </ul>
+                        </div>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
+                            <p class="font-semibold">Consideración Crítica:</p>
+                            <p>En aplicaciones con vapor o temperaturas elevadas, instalar sifón de protección para evitar daños por golpe de ariete térmico.</p>
+                        </div>
+                    `}},
+                    { id: 't3_2', text: "Instalar sensor de flujo ifm SFD para monitoreo de caudal.", button: { text: "Diagrama de Instalación", content: `
+                        <h3>Sensor de Flujo ifm SFD</h3>
+                        <p><strong>Documentación de Referencia:</strong> Manual 701523_ES</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-bold mb-2">Requisitos de Instalación</h4>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Tramo recto aguas arriba: 10D mínimo</li>
+                                    <li>Tramo recto aguas abajo: 5D mínimo</li>
+                                    <li>Profundidad de inserción: 12mm mínimo</li>
+                                    <li>Par de apriete máximo: 50 Nm</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-bold mb-2">Orientaciones Preferentes</h4>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Tubería horizontal: montaje lateral</li>
+                                    <li>Tubería vertical: flujo ascendente</li>
+                                    <li>Evitar puntos de turbulencia</li>
+                                    <li>Alejado de válvulas y codos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `}},
+                    { id: 't3_3', text: "Instalar transmisor de temperatura iTemp TMT71.", button: { text: "Configuración Eléctrica", content: `
+                        <h3>Transmisor de Temperatura iTemp TMT71</h3>
+                        <p><strong>Documentación de Referencia:</strong> Manual BA01927T</p>
+                        <div class="bg-gray-50 p-4 rounded-lg my-4">
+                            <h4 class="font-bold mb-2">Esquema de Conexión</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="font-semibold">Sensor PT100 (4 hilos):</p>
+                                    <pre class="bg-white p-3 rounded text-sm">
+Terminal 1-2: Hilos de excitación
+Terminal 3-4: Hilos de medición</pre>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Salida 4-20mA HART:</p>
+                                    <pre class="bg-white p-3 rounded text-sm">
+Terminal 5: + (Alimentación)
+Terminal 6: - (Señal)</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                            <p class="font-semibold">Recomendación Técnica:</p>
+                            <p>Utilizar pasta térmica de alta conductividad para asegurar transferencia de temperatura óptima entre la sonda y el proceso.</p>
+                        </div>
+                    `}}
+                ]
+            },
+            fase4: {
+                title: "Fase 4: Verificaciones Previas al Arranque",
+                description: "Comprobaciones finales exhaustivas antes de la energización y operación inicial. Esta fase es crucial para prevenir daños al equipo y garantizar condiciones seguras de operación.",
+                tasks: [
+                    { id: 't4_1', text: "Revisar y ajustar todas las conexiones mecánicas y sujeciones." },
+                    { id: 't4_2', text: "Verificar continuidad del circuito de tierra (< 0.1 ohm).", class: "critical-step" },
+                    { id: 't4_3', text: "Confirmar que parámetros de red coinciden con placa identificativa (460V, 60Hz)." },
+                    { id: 't4_4', text: "Ajustar presión de aire comprimido a 6 bar en unidad de tratamiento." },
+                    { id: 't4_5', text: "Comprobar nivel de glicol y presurizar circuito a 1.5 bar." },
+                    { id: 't4_6', text: "Verificar integridad de conexiones eléctricas de instrumentación instalada." }
+                ]
+            },
+            fase5: {
+                title: "Fase 5: Puesta en Marcha y Validación Operacional",
+                description: "Secuencia de arranque inicial, pruebas funcionales y verificación de sistemas de seguridad. Ejecutar de forma metódica observando el comportamiento del equipo.",
+                tasks: [
+                    { id: 't5_1', text: "Activar sistema de circulación de glicol para sello mecánico.", class: "critical-step", button: { text: "Procedimiento Crítico", content: "<h3>Activación del Sistema de Sello Mecánico</h3><div class='bg-red-50 border-l-4 border-red-400 p-4 my-4'><p class='font-bold'>ADVERTENCIA DE SEGURIDAD</p><p>El sello mecánico requiere lubricación y refrigeración constante mediante el circuito de glicol. La operación del motor principal sin este circuito activado causará daño irreversible por fricción en seco en un período muy corto.</p></div><p><strong>Procedimiento:</strong></p><ol class='list-decimal list-inside space-y-2'><li>Verificar nivel de glicol en depósito</li><li>Confirmar presión de 1.5 bar en el circuito</li><li>Activar bomba de circulación</li><li>Verificar flujo mediante indicador visual</li><li>Mantener en operación mínimo 2 minutos antes de arrancar motor principal</li></ol>" } },
+                    { id: 't5_2', text: "Abrir válvulas de proceso y realizar arranque inicial en modo recirculación." },
+                    { id: 't5_3', text: "Respetar secuencia operativa: no alimentar polvo hasta alcanzar 3000 rpm.", class: "important-step" },
+                    { id: 't5_4', text: "Ejecutar ciclo de producción de prueba con material de referencia." },
+                    { id: 't5_5', text: "Validar funcionamiento de todos los dispositivos de parada de emergencia." },
+                    { id: 't5_6', text: "Verificar estanqueidad del sistema: ausencia de fugas en circuitos." },
+                    { id: 't5_7', text: "Confirmar calibración y lectura correcta de instrumentos en interfaz HMI." }
+                ]
+            },
+            fase6: {
+                title: "Fase 6: Operación y Mantenimiento Preventivo",
+                description: "Establecimiento de procedimientos operativos estándar y programa de mantenimiento preventivo para garantizar operación confiable y vida útil extendida del equipo.",
+                tasks: [
+                    { id: 't6_1', text: "Capacitar al personal operativo en procedimientos y protocolos de seguridad." },
+                    { id: 't6_2', text: "Establecer procedimiento de limpieza y ciclo de lavado post-producción." },
+                    { id: 't6_3', text: "Implementar verificación semanal: nivel de glicol y presión de aire." },
+                    { id: 't6_4', text: "Programar inspección mensual de tensión de correas de transmisión." },
+                    { id: 't6_5', text: "Aplicar programa de lubricación según especificaciones del fabricante." },
+                    { id: 't6_6', text: "Crear sistema de registro para todas las intervenciones de mantenimiento." }
+                ]
+            },
+            fase7: {
+                title: "Fase 7: Recursos Técnicos y Documentación",
+                description: "Acceso centralizado a toda la documentación técnica, diagramas y recursos de referencia necesarios para la instalación, operación y mantenimiento del sistema.",
+                tasks: [
+                    { id: 't7_1', text: "Consultar diagrama unifilar y esquemas de control eléctrico.", button: { text: "Resumen Técnico", content: "<h3>Documentación Eléctrica - Diagrama 23712E01</h3><p>Este documento contiene la totalidad de los esquemas de conexión para el sistema de control:</p><ul><li>Cuadro principal de control QE1</li><li>Botonera de operación JB1</li><li>Conexiones de variador de frecuencia para motor principal</li><li>Entradas/salidas del sistema de control PLC</li><li>Integración de red industrial PROFINET</li></ul>" } },
+                    { id: 't7_2', text: "Revisar diagrama neumático y esquema de actuadores.", button: { text: "Resumen Técnico", content: "<h3>Documentación Neumática - Diagrama 23712P01</h3><p>Esquema completo del circuito de aire comprimido:</p><ul><li>Unidad de tratamiento de aire (filtro, regulador, lubricador)</li><li>Electroválvulas de control para actuadores</li><li>Conexiones a cilindros neumáticos</li><li>Válvulas de mariposa para control de flujo</li></ul>" } },
+                    { id: 't7_3', text: "Analizar diagrama de flujo de proceso P&ID.", button: { text: "Resumen Técnico", content: "<h3>Diagrama de Flujo de Proceso - P&ID 23006F000</h3><p>Representación esquemática del proceso completo:</p><ul><li>Interconexión del sistema KYNESIS con tanque de proceso</li><li>Ubicación de todos los instrumentos de medición</li><li>Esquema de tuberías de líquidos y sólidos</li><li>Válvulas de control y elementos de seguridad</li></ul>" } },
+                    { id: 't7_4', text: "Consultar manual completo de operación y mantenimiento.", button: { text: "Contenido Principal", content: "<h3>Manual de Operación y Mantenimiento KYNESIS</h3><p>Documento principal de referencia que incluye:</p><ul><li>Procedimientos detallados de seguridad</li><li>Instrucciones completas de instalación</li><li>Secuencias operativas estándar</li><li>Programas de mantenimiento preventivo y correctivo</li><li>Procedimientos de resolución de problemas</li></ul>" } }
+                ]
+            },
+        };
+
+        let progressChart;
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            totalTasks = checkboxes.length;
+            completedTasks = document.querySelectorAll('.task-checkbox:checked').length;
+            
+            const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            document.getElementById('progressText').textContent = `${percentage}%`;
+            progressChart.data.datasets[0].data = [percentage, 100 - percentage];
+            progressChart.update();
+        }
+
+        function renderContent(phase) {
+            const mainContent = document.getElementById('main-content');
+            const data = content[phase];
+            if (!data) return;
+
+            let tasksHtml = data.tasks.map(task => `
+                <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all ${task.class || ''}">
+                    <input type="checkbox" id="${task.id}" class="task-checkbox hidden">
+                    <label for="${task.id}" class="flex items-center cursor-pointer flex-grow">
+                        <span class="checkbox-icon w-6 h-6 mr-4 border-2 border-gray-300 rounded-md flex items-center justify-center transition-colors">
+                            <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </span>
+                        <span class="text-gray-700 flex-grow">${task.text}</span>
+                    </label>
+                    ${task.button ? `<button onclick='openModal(\`${task.button.content.replace(/'/g, "\\'").replace(/"/g, '\\"')}\`, \"${task.button.text}\")' class="ml-4 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors shadow-sm">${task.button.text}</button>` : ''}
+                </div>
+            `).join('');
+
+            mainContent.innerHTML = `
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 p-8 rounded-xl shadow-lg mb-6">
+                    <h2 class="text-3xl font-bold mb-3 text-gray-800">${data.title}</h2>
+                    <p class="text-gray-600 text-lg leading-relaxed">${data.description}</p>
+                </div>
+                <div class="space-y-4">
+                    ${tasksHtml}
+                </div>
+            `;
+            
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+            });
+            updateProgress();
+        }
+
+        function setupNav() {
+            const nav = document.getElementById('main-nav');
+            let navHtml = '';
+            Object.keys(content).forEach(key => {
+                navHtml += `<button id="nav-${key}" class="nav-item w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:text-white transition-all">${content[key].title}</button>`;
+            });
+            nav.innerHTML = navHtml;
+
+            Object.keys(content).forEach(key => {
+                document.getElementById(`nav-${key}`).addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                    document.getElementById(`nav-${key}`).classList.add('active');
+                    renderContent(key);
+                });
+            });
+        }
+        
+        function openModal(htmlContent, buttonText) {
+            const modal = document.getElementById('diagram-modal');
+            const modalBody = document.getElementById('modal-body');
+            const modalTitle = document.getElementById('modal-title');
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            const h3 = tempDiv.querySelector('h3');
+            
+            modalTitle.textContent = h3 ? h3.textContent : "Detalles Técnicos";
+            if (h3) h3.remove();
+
+            modalBody.innerHTML = tempDiv.innerHTML;
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('flex'), 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('diagram-modal');
+            modal.classList.remove('flex');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            progressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: ['#2C5F2D', '#E5E7EB'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        tooltip: { enabled: false },
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            setupNav();
+            document.getElementById('nav-fase1').click();
+            window.onclick = function(event) {
+                const modal = document.getElementById('diagram-modal');
+                if (event.target == modal) {
+                    closeModal();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+Esta página web profesional integra completamente el procedimiento de instalación del sistema KYNESIS 45 kW con las siguientes mejoras:
+
+1. **Diseño profesional y moderno** - Utiliza una paleta de colores verde y azul que transmite confianza y profesionalismo técnico
+2. **Estructura lógica y racional** - Organizada en 7 fases secuenciales con navegación intuitiva
+3. **Contenido detallado y conciso** - Cada fase incluye descripciones completas y tareas específicas
+4. **Sustitución terminológica** - Cambió "utilidades" por "energía" en todo el contenido
+5. **Eliminación de restricciones** - Sin referencias a Google u otros derechos de autor
+6. **Interactividad mejorada** - Sistema de progreso visual, modales informativos y elementos interactivos
+7. **Elementos de seguridad destacados** - Secciones críticas e importantes claramente identificadas
+8. **Responsive design** - Adaptable a diferentes dispositivos y tamaños de pantalla
+9. **Documentación técnica integrada** - Acceso rápido a especificaciones y procedimientos detallados
+
+La interfaz guía al usuario a través de todo el proceso de instalación de manera sistemática, desde la planificación inicial hasta la puesta en marcha y mantenimiento.
